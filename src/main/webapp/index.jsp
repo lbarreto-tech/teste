@@ -33,7 +33,7 @@
   </head>
   <body>
     <main class="form-signin">
-      <form action="/LoginServlet" method="POST">
+      <form action="LoginServlet" method="POST">
          <h1 class="h3 mb-3 fw-normal text-center">Insira seu login</h1>
 
         <div class="form-floating">

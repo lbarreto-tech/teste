@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -50,47 +49,60 @@ public class LoginServlet extends HttpServlet {
          
 	}
 
-	
-	protected void doPostLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String acao = request.getServletPath();
-		
-		if(acao.equals("/LoginServlet")) {
-			 email = request.getParameter("email");
-			 password = request.getParameter("password");
-			
-			CargoDao dao = new CargoDao();
-			String cargo = dao.verificaCargo(email, password);
-			
-				if(cargo.equals("GESTOR")) {
-					RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
-					redirecionar.forward(request, response);
-				}else if(cargo.equals("SOLICITANTE")) {
-					RequestDispatcher redirecionar = request.getRequestDispatcher("telaSolicitante.jsp");
-					redirecionar.forward(request, response);
-				}else {
-					RequestDispatcher redirecionar = request.getRequestDispatcher("index.jsp");
-					redirecionar.forward(request, response);
-				}
-		}
-	}
-	
-	protected void doPostSolicitante(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
-		
-		String acao = request.getServletPath();
-		
-		if(acao.equals("/SolicitanteServlet")) {
-			
-			String dataReserva = request.getParameter("data");
-			String horarioInicio = request.getParameter("horarioInicio");
-			String horarioFim = request.getParameter("horarioFim");
-			String nomeEspaco = request.getParameter("sala");
-			
-			CriarSolicitacaoDao dao = new CriarSolicitacaoDao();
-			dao.cadastrarSolicitacao(email, password, dataReserva, horarioInicio, horarioFim, nomeEspaco);
-			dao.cadastraAuditoria(email, password);
-		}
-	}
 
+    switch (acao) {
+        case "/LoginServlet":
+            handleLogin(request, response);
+            break;
+        case "/SolicitanteServlet":
+            try {
+                handleSolicitante(request, response);
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+            break;
+        default:
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Ação não reconhecida");
+    }
+		}
+	
+	
+		private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String email = request.getParameter("email");
+    String password = request.getParameter("password");
+
+    // Exemplo de uso de sessão:
+    request.getSession().setAttribute("email", email);
+
+    CargoDao dao = new CargoDao();
+    String cargo = dao.verificaCargo(email, password);
+
+    if ("GESTOR".equals(cargo)) {
+        request.getRequestDispatcher("telaPrincipal.jsp").forward(request, response);
+    } else if ("SOLICITANTE".equals(cargo)) {
+        response.sendRedirect(request.getContextPath() + "/SolicitanteServlet");
+    } else {
+        request.setAttribute("erroLogin", "Usuário ou senha inválidos");
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+    }
+}
+
+private void handleSolicitante(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
+    String email = (String) request.getSession().getAttribute("email");
+    String password = (String) request.getSession().getAttribute("password");
+
+    String dataReserva = request.getParameter("data");
+    String horarioInicio = request.getParameter("horarioInicio");
+    String horarioFim = request.getParameter("horarioFim");
+    String nomeEspaco = request.getParameter("sala");
+
+    CriarSolicitacaoDao dao = new CriarSolicitacaoDao();
+    dao.cadastrarSolicitacao(email, password, dataReserva, horarioInicio, horarioFim, nomeEspaco);
+    dao.cadastraAuditoria(email, password);
+
+    // Redirecionar ou mostrar confirmação
+}
 	
 }
