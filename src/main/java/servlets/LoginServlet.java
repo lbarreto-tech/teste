@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -80,9 +81,11 @@ public class LoginServlet extends HttpServlet {
     String cargo = dao.verificaCargo(email, password);
 
     if ("GESTOR".equals(cargo)) {
-        request.getRequestDispatcher("telaPrincipal.jsp").forward(request, response);
+       RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
+	   redirecionar.forward(request, response);
     } else if ("SOLICITANTE".equals(cargo)) {
-        response.sendRedirect(request.getContextPath() + "/SolicitanteServlet");
+        RequestDispatcher redirecionar = request.getRequestDispatcher("telaSolicitante.jsp");
+		redirecionar.forward(request, response);
     } else {
         request.setAttribute("erroLogin", "Usuário ou senha inválidos");
         request.getRequestDispatcher("index.jsp").forward(request, response);
