@@ -66,7 +66,8 @@ public class LoginServlet extends HttpServlet {
 					RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
 					redirecionar.forward(request, response);
 				}else if(cargo.equals("SOLICITANTE")) {
-					//Redireciona para a tela de usuario
+					RequestDispatcher redirecionar = request.getRequestDispatcher("telaSolicitante.jsp");
+					redirecionar.forward(request, response);
 				}else {
 					RequestDispatcher redirecionar = request.getRequestDispatcher("index.jsp");
 					redirecionar.forward(request, response);
