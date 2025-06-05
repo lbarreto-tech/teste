@@ -98,7 +98,7 @@ body {
 								if (espacos != null) {
 									for (EspacoModel espaco : espacos) {
 								%>
-									<option value="<%= espaco.getId() %>"><%= espaco.getNome() %></option>
+									<option value="<%= espaco.getIdEspaco() %>"><%= espaco.getNome() %></option>
 								<%
 									}
 								}
