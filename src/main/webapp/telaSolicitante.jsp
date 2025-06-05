@@ -94,7 +94,7 @@ body {
 							<label for="sala" class="form-label">Nome do espaço</label>
 							<select class="form-select" name="sala" id="sala" required>
 								<%
-								List<EspacoModel> espacos = (List<EspacoModel>) request.getAttribute("lista");
+								List<EspacoModel> espacos = (List<EspacoModel>) request.getAttribute("espacos");
 								if (espacos != null) {
 									for (EspacoModel espaco : espacos) {
 								%>

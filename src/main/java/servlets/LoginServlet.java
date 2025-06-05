@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -14,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import dao.CargoDao;
 import dao.CriarSolicitacaoDao;
+import dao.EspacoDao;
 import dao.SolicitacaoDao;
+import model.EspacoModel;
 import model.SolicitacaoModel;
 
 
@@ -32,22 +35,22 @@ public class LoginServlet extends HttpServlet {
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		 SolicitacaoDao solicitacao = new SolicitacaoDao();
-         List<SolicitacaoModel> solicitacoes;
+         
+		EspacoDao dao = new EspacoDao();
+		List<EspacoModel> espacos;
+
 		try {
-			solicitacoes = solicitacao.listarSolicitacoesPorUsuario(email, password);
-			if(solicitacoes.isEmpty()) {
-		         request.setAttribute("Erro", "Nenhuma solicitação cadastrada" );
-		    }
-			request.setAttribute("lista", solicitacoes);
+			espacos = dao.listar();
+			if(espacos.isEmpty()){
+				request.setAttribute("Erro", "Nenhuma espço cadastrada" );
+			}
+			request.setAttribute("espacos", espacos);
 	        request.getRequestDispatcher("telaSolicitante.jsp").forward(request, response);
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-         
-         
+
+
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
