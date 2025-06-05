@@ -86,7 +86,7 @@ public class LoginServlet extends HttpServlet {
     CargoDao dao = new CargoDao();
     String cargo = dao.verificaCargo(email, password);
 
-    
+    // Salva email e senha na sessão
     request.getSession().setAttribute("email", email);
     request.getSession().setAttribute("password", password);
 
@@ -94,6 +94,7 @@ public class LoginServlet extends HttpServlet {
         RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
         redirecionar.forward(request, response);
     } else if ("SOLICITANTE".equals(cargo)) {
+        
         SolicitacaoDao solicitacaoDao = new SolicitacaoDao();
         List<SolicitacaoModel> solicitacoes = null;
         try {
