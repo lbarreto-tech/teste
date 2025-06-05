@@ -97,10 +97,10 @@ public class CargoDao {
 			   
 			   try {
 				   PreparedStatement statement = connection.prepareStatement(sql);
-					ResultSet resultado = statement.executeQuery();
+					
 					statement.setString(1, email);
 					statement.setString(2, password);
-
+					ResultSet resultado = statement.executeQuery();
 					while(resultado.next()) {
 						model.setNomeCargo(resultado.getString("nomeCargo"));
 						retorno = model.getNomeCargo();
