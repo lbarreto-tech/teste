@@ -36,7 +36,7 @@ public class LoginServlet extends HttpServlet {
 		 SolicitacaoDao solicitacao = new SolicitacaoDao();
          List<SolicitacaoModel> solicitacoes;
 		try {
-			solicitacoes = solicitacao.listarSolicitacoesPorUsuario(email, email);
+			solicitacoes = solicitacao.listarSolicitacoesPorUsuario(email, password);
 			if(solicitacoes.isEmpty()) {
 		         request.setAttribute("Erro", "Nenhuma solicitação cadastrada" );
 		    }
