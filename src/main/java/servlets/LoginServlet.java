@@ -70,26 +70,23 @@ public class LoginServlet extends HttpServlet {
 		}
 	
 	
-		private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String email = request.getParameter("email");
-    String password = request.getParameter("password");
+	private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
 
-    // Exemplo de uso de sessão:
-    request.getSession().setAttribute("email", email);
+		CargoDao dao = new CargoDao();
+		String cargo = dao.verificaCargo(email, password);
 
-    CargoDao dao = new CargoDao();
-    String cargo = dao.verificaCargo(email, password);
-
-    if ("GESTOR".equals(cargo)) {
-       RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
-	   redirecionar.forward(request, response);
-    } else if ("SOLICITANTE".equals(cargo)) {
-        RequestDispatcher redirecionar = request.getRequestDispatcher("telaSolicitante.jsp");
+		if ("GESTOR".equals(cargo)) {
+		RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
 		redirecionar.forward(request, response);
-    } else {
-        request.setAttribute("erroLogin", "Usuário ou senha inválidos");
-        request.getRequestDispatcher("index.jsp").forward(request, response);
-    }
+		} else if ("SOLICITANTE".equals(cargo)) {
+			RequestDispatcher redirecionar = request.getRequestDispatcher("telaSolicitante.jsp");
+			redirecionar.forward(request, response);
+		} else {
+			request.setAttribute("erroLogin", "Usuário ou senha inválidos");
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		}
 }
 
 private void handleSolicitante(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
@@ -105,7 +102,7 @@ private void handleSolicitante(HttpServletRequest request, HttpServletResponse r
     dao.cadastrarSolicitacao(email, password, dataReserva, horarioInicio, horarioFim, nomeEspaco);
     dao.cadastraAuditoria(email, password);
 
-    // Redirecionar ou mostrar confirmação
+    
 }
 	
 }
