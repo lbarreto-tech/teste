@@ -88,8 +88,8 @@ public class LoginServlet extends HttpServlet {
 			request.getRequestDispatcher("index.jsp").forward(request, response);
 		}*/
 
-		RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
-		redirecionar.forward(request, response);
+		RequestDispatcher redirecionar = request.getRequestDispatcher("telaSolicitante.jsp");
+			redirecionar.forward(request, response);
 }
 
 private void handleSolicitante(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
