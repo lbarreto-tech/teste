@@ -67,14 +67,14 @@ public class CargoDao {
 	
 	public CargoModel listarPorId(Long id){
 		CargoModel model = new CargoModel();
-		
-		String sql = "select * from cargo where id = " + id;
+		String sql = "select * from cargo where idCargo = ?";
 		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setLong(1, id);
 			ResultSet resultado = statement.executeQuery();
 			
-			while(resultado.next()) {
+			if(resultado.next()) {
 				model.setIdCargo(resultado.getLong("idCargo"));
 				model.setNomeCargo(resultado.getString("nomeCargo"));
 			}
@@ -113,10 +113,11 @@ public class CargoDao {
 	} 
 	
 	public void deletar(Long id) {
-		String sql = "delete from cargo where id = " + id;
+		String sql = "delete from cargo where idCargo = ?";
 		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setLong(1, id);
 			statement.executeUpdate();
 			connection.commit();
 			

@@ -7,6 +7,7 @@ public class AvaliacaoModel {
 	private String justificativa;
 	private Long idSolicitacaoFk;
 	private String dataAvaliacao;
+	private java.sql.Date dataAvaliacaoSql;
 	private String status;
 	
 	
@@ -45,6 +46,25 @@ public class AvaliacaoModel {
 	}
 	public void setDataAvaliacao(String dataAvaliacao) {
 		this.dataAvaliacao = dataAvaliacao;
+		try {
+			// Aceita formatos yyyy-MM-dd ou dd/MM/yyyy
+			if (dataAvaliacao != null && dataAvaliacao.contains("/")) {
+				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+				java.util.Date utilDate = sdf.parse(dataAvaliacao);
+				this.dataAvaliacaoSql = new java.sql.Date(utilDate.getTime());
+			} else if (dataAvaliacao != null && dataAvaliacao.contains("-")) {
+				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+				java.util.Date utilDate = sdf.parse(dataAvaliacao);
+				this.dataAvaliacaoSql = new java.sql.Date(utilDate.getTime());
+			} else {
+				this.dataAvaliacaoSql = null;
+			}
+		} catch (Exception e) {
+			this.dataAvaliacaoSql = null;
+		}
+	}
+	public java.sql.Date getDataAvaliacaoSql() {
+		return dataAvaliacaoSql;
 	}
 
 }

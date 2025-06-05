@@ -27,12 +27,16 @@ public class AvaliacaoDao {
 			insert.setLong(1, model.getIdGestorFk());
 			insert.setString(2, model.getJustificativa());
 			insert.setLong(3, model.getIdSolicitacaoFk());
-			insert.setString(4, model.getDataAvaliacao());
+			if (model.getDataAvaliacaoSql() != null) {
+				insert.setDate(4, model.getDataAvaliacaoSql());
+			} else {
+				insert.setString(4, model.getDataAvaliacao());
+			}
 			insert.setString(5, model.getStatus());
 			insert.executeUpdate();
 			connection.commit();
 			
-			System.out.println("Salvou as informaões no banco");
+			System.out.println("Salvou as informações no banco");
 		} catch (Exception e) {
 			try {
 				System.out.println("Alterações revertidas no banco");
@@ -40,7 +44,7 @@ public class AvaliacaoDao {
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-			System.out.println("Não salvou as informaões no banco");
+			System.out.println("Não salvou as informações no banco");
 			e.printStackTrace();
 		}
 	}

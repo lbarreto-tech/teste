@@ -6,11 +6,17 @@ import dao.EmailDao;
 import dao.SolicitacaoDao;
 import dao.CriarSolicitacaoDao;
 import dao.EspacoDao;
+import dao.AvaliacaoDao;
+import dao.AuditoriaDao;
 import model.UsuarioModel;
 import model.EmailModel;
 import model.SolicitacaoModel;
 import model.EspacoModel;
 import model.CargoModel;
+import model.AvaliacaoModel;
+import model.AuditoriaModel;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -106,7 +112,6 @@ public class Main {
                     EmailModel emailModel = new EmailModel();
                     emailModel.setEnderecoEmail(email);
                     emailModel.setSenha(senha);
-                    // Buscar o id do usuário recém cadastrado
                     ArrayList<UsuarioModel> usuarios = usuarioDao.listarTodos();
                     Long idUsuario = usuarios.get(usuarios.size()-1).getIdUsuario();
                     emailModel.setIdUsuarioFk(idUsuario);
@@ -118,37 +123,43 @@ public class Main {
                     emailLogado = scanner.nextLine();
                     System.out.print("Digite a senha: ");
                     senhaLogado = scanner.nextLine();
-                    cargoLogado = cargoDao.verificaCargo(emailLogado, senhaLogado);
-                    if (!cargoLogado.equals("www")) {
-                        try {
-                            Long idUser = criarSolicitacaoDao.getIdUsuarioPorEmailSenha(emailLogado, senhaLogado);
-                            usuarioLogado = usuarioDao.BuscarPorId(idUser);
-                            System.out.println("Login realizado como: " + usuarioLogado.getNomeUsuario() + " (" + cargoLogado + ")");
-                        } catch (Exception e) {
-                            System.out.println("Erro ao buscar usuário.");
-                        }
-                    } else {
+                    try {
+                        Long idUser = criarSolicitacaoDao.getIdUsuarioPorEmailSenha(emailLogado, senhaLogado);
+                        usuarioLogado = usuarioDao.BuscarPorId(idUser);
+                        cargoLogado = cargoDao.verificaCargo(emailLogado, senhaLogado);
+                        System.out.println("Login realizado como: " + usuarioLogado.getNomeUsuario() + " (" + cargoLogado + ")");
+                    } catch (Exception e) {
+                        usuarioLogado = null;
+                        cargoLogado = null;
                         System.out.println("Email ou senha inválidos!");
                     }
                     break;
                 case 4:
-                    if (usuarioLogado != null && cargoLogado.equalsIgnoreCase("solicitante")) {
+                    if (usuarioLogado != null && cargoLogado != null && cargoLogado.trim().toLowerCase().equals("solicitante")) {
                         try {
                             System.out.println("Espaços disponíveis:");
                             List<EspacoModel> espacos = espacoDao.listar();
                             for (EspacoModel esp : espacos) {
                                 System.out.println("ID: " + esp.getIdEspaco() + ", Nome: " + esp.getNome());
                             }
-                            System.out.print("Digite o nome do espaço: ");
-                            String nomeEspaco = scanner.nextLine();
+                            System.out.print("Digite o id do espaço: ");
+                            Long idEspaco = Long.parseLong(scanner.nextLine());
                             System.out.print("Data da reserva (dd/MM/yyyy): ");
                             String dataReserva = scanner.nextLine();
                             System.out.print("Horário início (HH:mm): ");
                             String horarioInicio = scanner.nextLine();
                             System.out.print("Horário fim (HH:mm): ");
                             String horarioFim = scanner.nextLine();
-                            criarSolicitacaoDao.cadastrarSolicitacao(emailLogado, senhaLogado, dataReserva, horarioInicio, horarioFim, nomeEspaco);
+                            criarSolicitacaoDao.cadastrarSolicitacaoPorId(emailLogado, senhaLogado, dataReserva, horarioInicio, horarioFim, idEspaco);
                             System.out.println("Solicitação cadastrada!");
+                            // Auditoria do cadastro de solicitação
+                            AuditoriaDao auditoriaDao = new AuditoriaDao();
+                            AuditoriaModel auditoria = new AuditoriaModel();
+                            auditoria.setIdUsuarioFk(usuarioLogado.getIdUsuario());
+                            auditoria.setDataAcao(java.sql.Date.valueOf(LocalDate.now()));
+                            auditoria.setAcao("Cadastro de solicitação (Espaço ID: " + idEspaco + ")");
+                            auditoriaDao.salvar(auditoria);
+                            System.out.println("--- Auditoria registrada ---");
                         } catch (Exception e) {
                             System.out.println("Erro ao cadastrar solicitação: " + e.getMessage());
                         }
@@ -157,26 +168,62 @@ public class Main {
                     }
                     break;
                 case 5:
-                    if (usuarioLogado != null && cargoLogado.equalsIgnoreCase("gestor")) {
+                    if (usuarioLogado != null && cargoLogado != null && cargoLogado.trim().toLowerCase().equals("gestor")) {
                         try {
                             List<SolicitacaoModel> solicitacoes = solicitacaoDao.listarTodos();
                             for (SolicitacaoModel s : solicitacoes) {
-                                System.out.println("ID: " + s.getIdSolicitacao() + ", Usuário: " + s.getIdUsuarioFk() + ", Espaço: " + s.getIdEspacoFK() + ", Status: " + s.getStatus());
+                                UsuarioModel usuario = usuarioDao.BuscarPorId(s.getIdUsuarioFk());
+                                String nomeUsuarioSolicitacao = usuario != null ? usuario.getNomeUsuario() : "(desconhecido)";
+                                EspacoModel espaco = espacoDao.FindById(s.getIdEspacoFK());
+                                String nomeEspaco = espaco != null ? espaco.getNome() : "(desconhecido)";
+                                System.out.println("ID: " + s.getIdSolicitacao() + ", Usuário: " + nomeUsuarioSolicitacao + ", Espaço: " + nomeEspaco + ", Status: " + s.getStatus());
                             }
-                            System.out.print("Digite o ID da solicitação para aceitar/recusar: ");
+                            System.out.print("Digite o ID da solicitação para avaliar: ");
                             Long idSol = scanner.nextLong();
                             scanner.nextLine();
-                            System.out.print("Digite 'A' para aceitar ou 'R' para recusar: ");
+                            System.out.print("Digite 'A' para aprovar ou 'R' para rejeitar: ");
                             String acao = scanner.nextLine();
+                            System.out.print("Digite a justificativa da avaliação: ");
+                            String justificativa = scanner.nextLine();
+                            Long idGestor = usuarioLogado.getIdUsuario();
+                            String statusAvaliacao;
+                            String acaoAuditoria;
                             if (acao.equalsIgnoreCase("A")) {
                                 solicitacaoDao.aceitarSolicitacao(idSol);
-                                System.out.println("Solicitação aceita!");
+                                statusAvaliacao = "APROVADO";
+                                acaoAuditoria = "Aprovação de solicitação";
+                                System.out.println("Solicitação aprovada!");
                             } else if (acao.equalsIgnoreCase("R")) {
-                                solicitacaoDao.delete(idSol);
-                                System.out.println("Solicitação recusada e removida!");
+                                solicitacaoDao.rejeitarSolicitacao(idSol);
+                                statusAvaliacao = "REJEITADO";
+                                acaoAuditoria = "Rejeição de solicitação";
+                                System.out.println("Solicitação rejeitada!");
                             } else {
                                 System.out.println("Ação inválida!");
+                                break;
                             }
+                            // Salvar avaliação no banco
+                            AvaliacaoDao avaliacaoDao = new AvaliacaoDao();
+                            AvaliacaoModel avaliacao = new AvaliacaoModel();
+                            avaliacao.setIdGestorFk(idGestor);
+                            avaliacao.setJustificativa(justificativa);
+                            avaliacao.setIdSolicitacaoFk(idSol);
+                            avaliacao.setStatus(statusAvaliacao);
+                            String dataAvaliacao = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                            avaliacao.setDataAvaliacao(dataAvaliacao);
+                            avaliacaoDao.salvar(avaliacao);
+                            // Auditoria da avaliação
+                            AuditoriaDao auditoriaDao = new AuditoriaDao();
+                            AuditoriaModel auditoria = new AuditoriaModel();
+                            auditoria.setIdUsuarioFk(idGestor);
+                            auditoria.setDataAcao(java.sql.Date.valueOf(dataAvaliacao));
+                            auditoria.setAcao("Avaliação: " + acaoAuditoria + " (Solicitação ID: " + idSol + ")");
+                            auditoriaDao.salvar(auditoria);
+                            System.out.println("--- Avaliação registrada ---");
+                            System.out.println("ID do gestor: " + idGestor);
+                            System.out.println("Justificativa: " + justificativa);
+                            System.out.println("ID da solicitação: " + idSol);
+                            System.out.println("Status: " + statusAvaliacao);
                         } catch (Exception e) {
                             System.out.println("Erro ao processar solicitação: " + e.getMessage());
                         }

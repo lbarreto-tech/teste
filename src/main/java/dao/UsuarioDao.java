@@ -71,11 +71,12 @@ public class UsuarioDao {
 		UsuarioModel usuario = new UsuarioModel();
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setLong(1, idUsuario);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()) {
 				usuario.setIdUsuario(rs.getLong("idUsuario"));
 				usuario.setIdCargoFK(rs.getLong("idCargoFK"));
-				usuario.setNomeUsuario(rs.getString("NomeUsuario"));
+				usuario.setNomeUsuario(rs.getString("nomeUsuario"));
 			}else {
 				return null;
 			}

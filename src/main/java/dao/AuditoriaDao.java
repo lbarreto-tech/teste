@@ -25,7 +25,7 @@ public class AuditoriaDao {
 		try {
 			PreparedStatement insert = connection.prepareStatement(sql);
 			insert.setLong(1, model.getIdUsuarioFk());
-			insert.setString(2, model.getDataAcao());
+			insert.setDate(2, new java.sql.Date(model.getDataAcao().getTime()));
 			insert.setString(3, model.getAcao());
 			insert.executeUpdate();
 			connection.commit();
@@ -56,7 +56,7 @@ public class AuditoriaDao {
 				AuditoriaModel model = new AuditoriaModel();
 				model.setIdAuditoria(resultado.getLong("idAuditoria"));
 				model.setIdUsuarioFk(resultado.getLong("idUsuarioFk"));
-				model.setDataAcao(resultado.getString("dataAcao"));
+				model.setDataAcao(resultado.getDate("dataAcao"));
 				model.setAcao(resultado.getString("acao"));
 				
 				list.add(model);
@@ -82,7 +82,7 @@ public class AuditoriaDao {
 			while(resultado.next()) {
 				model.setIdAuditoria(resultado.getLong("idAuditoria"));
 				model.setIdUsuarioFk(resultado.getLong("idUsuarioFk"));
-				model.setDataAcao(resultado.getString("dataAcao"));
+				model.setDataAcao(resultado.getDate("dataAcao"));
 				model.setAcao(resultado.getString("acao"));
 			}
 			

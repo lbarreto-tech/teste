@@ -1,4 +1,3 @@
-<%@page import="java.util.ArrayList"%>
 <%@page import="model.SolicitacaoModel"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -58,17 +57,19 @@
                             <td><%= solicitacao.getHorarioInicio() %></td>
                             <td><%= solicitacao.getHorarioFim() %></td>
                             <td>
-                                <form method="post" action="aceitarSolicitacao" style="display: inline;">
+                                <form method="post" action="GestorServlet" style="display: inline;">
                                     <input type="hidden" name="idSolicitacao" value="<%= solicitacao.getIdSolicitacao() %>" />
+                                    <input type="hidden" name="acao" value="aceitar" />
                                     <button type="submit" class="btn btn-link text-success btn-icon" title="Aceitar">
                                         <i class="bi bi-check-circle-fill"></i>
                                     </button>
                                 </form>
 
-                                <form method="post" action="RecusarSolicitacao" style="display: inline;">
+                                <form method="post" action="GestorServlet" style="display: inline;">
                                     <input type="hidden" name="idSolicitacao" value="<%= solicitacao.getIdSolicitacao() %>" />
-                                    <button type="submit" class="btn btn-link text-danger btn-icon" title="Excluir"
-                                        onclick="return confirm('Tem certeza que deseja excluir esta solicitação?');">
+                                    <input type="hidden" name="acao" value="recusar" />
+                                    <button type="submit" class="btn btn-link text-danger btn-icon" title="Recusar"
+                                        onclick="return confirm('Tem certeza que deseja recusar esta solicitação?');">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 </form>
@@ -82,12 +83,9 @@
                 <%
                     }
                 %>
-
             </div>
         </div>
     </main>
-
-    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>

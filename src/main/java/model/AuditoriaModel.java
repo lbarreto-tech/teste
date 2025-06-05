@@ -4,7 +4,7 @@ public class AuditoriaModel {
 	
 	private Long idAuditoria;
 	private Long idUsuarioFk;
-	private String dataAcao;
+	private java.sql.Date dataAcao;
 	private String acao;
 	
 	
@@ -20,10 +20,10 @@ public class AuditoriaModel {
 	public void setIdUsuarioFk(Long idUsuarioFk) {
 		this.idUsuarioFk = idUsuarioFk;
 	}
-	public String getDataAcao() {
+	public java.sql.Date getDataAcao() {
 		return dataAcao;
 	}
-	public void setDataAcao(String dataAcao) {
+	public void setDataAcao(java.sql.Date dataAcao) {
 		this.dataAcao = dataAcao;
 	}
 	public String getAcao() {

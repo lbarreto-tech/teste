@@ -24,10 +24,14 @@ public class SolicitacaoDao {
 			ps.setLong(1, solicitacao.getIdUsuarioFk());
 			ps.setLong(2, solicitacao.getIdEspacoFK());
 			ps.setString(3, solicitacao.getStatus());
-			ps.setString(4, solicitacao.getDataSolicitacao());
-			ps.setString(5, solicitacao.getDataReserva());
-			ps.setString(6, solicitacao.getHorarioInicio());
-			ps.setString(7, solicitacao.getHorarioFim());
+			java.sql.Date dataSolicitacao = java.sql.Date.valueOf(solicitacao.getDataSolicitacao()); 
+			java.sql.Date dataReserva = java.sql.Date.valueOf(solicitacao.getDataReserva()); 
+			java.sql.Time horarioInicio = java.sql.Time.valueOf(solicitacao.getHorarioInicio() + ":00"); 
+			java.sql.Time horarioFim = java.sql.Time.valueOf(solicitacao.getHorarioFim() + ":00"); 
+			ps.setDate(4, dataSolicitacao);
+			ps.setDate(5, dataReserva);
+			ps.setTime(6, horarioInicio);
+			ps.setTime(7, horarioFim);
 			ps.executeUpdate();
 			connection.commit();
 			System.out.println("As informações foram salvas");
@@ -162,10 +166,10 @@ public class SolicitacaoDao {
 	}
 
 	public void aceitarSolicitacao(Long idSolicitacao) {
-		String sql = "UPDATE sc.status FROM solicitacao sc SET sc.status = ? WHERE sc.idSolicitacao = ?";
+		String sql = "UPDATE solicitacao SET status = ? WHERE idSolicitacao = ?";
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, "APROVADA"); 
+			ps.setString(1, "APROVADO");
 			ps.setLong(2, idSolicitacao);
 			ps.executeUpdate();
 			connection.commit();
@@ -180,4 +184,24 @@ public class SolicitacaoDao {
 			e.printStackTrace();
 		}
 	}
+
+	public void rejeitarSolicitacao(Long idSolicitacao) {
+        String sql = "UPDATE solicitacao SET status = ? WHERE idSolicitacao = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "REJEITADO");
+            ps.setLong(2, idSolicitacao);
+            ps.executeUpdate();
+            connection.commit();
+        } catch (Exception e) {
+            try {
+                connection.rollback();
+                System.out.println("Alterações revertidas no banco");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("As informações não foram salvas no banco");
+            e.printStackTrace();
+        }
+    }
 }
