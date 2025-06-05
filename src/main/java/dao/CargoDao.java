@@ -97,7 +97,6 @@ public class CargoDao {
 			   
 			   try {
 				   PreparedStatement statement = connection.prepareStatement(sql);
-					
 					statement.setString(1, email);
 					statement.setString(2, password);
 					ResultSet resultado = statement.executeQuery();

@@ -19,7 +19,7 @@ public class EquipamentoDao {
 
     // Método Create
     public void create(EquipamentoModel equipamento) throws SQLException {
-        String sql = "INSERT INTO equipamento (nomeEquipamento) VALUES (?)";
+        String sql = "INSERT INTO equipamento (nome_Equipamento) VALUES (?)";
 
         try (PreparedStatement statement = connection_BD.prepareStatement(sql)) {
             statement.setString(1, equipamento.getNomeEquipamento());
@@ -42,7 +42,7 @@ public class EquipamentoDao {
             while (resultSet.next()) {
                 EquipamentoModel equipamento = new EquipamentoModel();
                 equipamento.setIdEquipamento(resultSet.getLong("idEquipamento"));
-                equipamento.setNomeEquipamento(resultSet.getString("nomeEquipamento"));
+                equipamento.setNomeEquipamento(resultSet.getString("nome_Equipamento"));
                 equipamentos.add(equipamento);
             }
         }
@@ -62,7 +62,7 @@ public class EquipamentoDao {
                 if (resultSet.next()) {
                     equipamento = new EquipamentoModel();
                     equipamento.setIdEquipamento(resultSet.getLong("idEquipamento"));
-                    equipamento.setNomeEquipamento(resultSet.getString("nomeEquipamento"));
+                    equipamento.setNomeEquipamento(resultSet.getString("nome_Equipamento"));
                 }
             }
         }
@@ -72,7 +72,7 @@ public class EquipamentoDao {
 
     // Método Update
     public void update(EquipamentoModel equipamento) throws SQLException {
-        String sql = "UPDATE equipamento SET nomeEquipamento = ? WHERE idEquipamento = ?";
+        String sql = "UPDATE equipamento SET nome_Equipamento = ? WHERE idEquipamento = ?";
 
         try (PreparedStatement statement = connection_BD.prepareStatement(sql)) {
             statement.setString(1, equipamento.getNomeEquipamento());

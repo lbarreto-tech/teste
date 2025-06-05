@@ -76,10 +76,11 @@ public class AvaliacaoDao {
 	public AvaliacaoModel listarPorId(Long id) {
 		AvaliacaoModel model = new AvaliacaoModel();
 		
-		String sql = "select * from avaliacao where id = " + id;
+		String sql = "select * from avaliacao where id = ?";
 		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setLong(1, id);
 			ResultSet resultado = statement.executeQuery();
 			
 			while(resultado.next()) {

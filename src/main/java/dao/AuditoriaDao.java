@@ -72,10 +72,11 @@ public class AuditoriaDao {
 	public AuditoriaModel listarPorId(Long id){
 		AuditoriaModel model = new AuditoriaModel();
 		
-		String sql = "select * from auditoria where id = " + id;
+		String sql = "select * from auditoria where id = ?";
 		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setLong(1, id);
 			ResultSet resultado = statement.executeQuery();
 			
 			while(resultado.next()) {

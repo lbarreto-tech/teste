@@ -2,7 +2,7 @@ package model;
 
 public class EquipamentoModel {
     private long idEquipamento;
-    private String nomeEquipamento;
+    private String nome_Equipamento;
 
     public long getIdEquipamento() {
         return idEquipamento;
@@ -11,9 +11,10 @@ public class EquipamentoModel {
         this.idEquipamento = idEquipamento;
     }
     public String getNomeEquipamento() {
-        return nomeEquipamento;
+        return nome_Equipamento;
     }
-    public void setNomeEquipamento(String nomeEquipamento) {
-        this.nomeEquipamento = nomeEquipamento;
+    public void setNomeEquipamento(String nome_Equipamento) {
+        this.nome_Equipamento = nome_Equipamento;
     }
+
 }

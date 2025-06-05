@@ -50,23 +50,21 @@ public class CriarSolicitacaoDao {
 	}
 	
 	private Long getIdEspacoPorNome(String nomeEspaco) throws SQLException {
-		String sql = "select idEspaco from espaco where nome = " + nomeEspaco;
+		String sql = "select idEspaco from espaco where nome = ?";
 		
 		PreparedStatement statement = connection.prepareStatement(sql);
-		ResultSet resultado = statement.executeQuery();
 		statement.setString(1, nomeEspaco);
-		
+		ResultSet resultado = statement.executeQuery();
 		return resultado.getLong("idEspaco");
 	}
 	
 	public Long getIdUsuarioPorEmailSenha(String email, String senha) throws SQLException {
-		 String sql = "select u.idUsuario from usuario u join email e on u.idUsuario = e.idUsuarioFk where e.enderecoEmail = " + email + " and e.senha = " + senha;
+		 String sql = "select u.idUsuario from usuario u join email e on u.idUsuario = e.idUsuarioFk where e.enderecoEmail = ? and e.senha = ?";
 		 
 			 PreparedStatement statement = connection.prepareStatement(sql);
-			 ResultSet resultado = statement.executeQuery();
 			 statement.setString(1, email);
 			 statement.setString(2, senha); 
-		
+			 ResultSet resultado = statement.executeQuery();
 		 return resultado.getLong("idUsuario");
 	}
 	

@@ -72,10 +72,11 @@ public class EmailDao {
 	public EmailModel listarPorId(Long id){
 		EmailModel model = new EmailModel();
 		
-		String sql = "select * from email where id = " + id;
+		String sql = "select * from email where id = ?";
 		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setLong(1, id);
 			ResultSet resultado = statement.executeQuery();
 			
 			while(resultado.next()) {
