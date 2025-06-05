@@ -77,7 +77,7 @@ public class LoginServlet extends HttpServlet {
 		CargoDao dao = new CargoDao();
 		String cargo = dao.verificaCargo(email, password);
 
-		if ("GESTOR".equals(cargo)) {
+		/*if ("GESTOR".equals(cargo)) {
 		RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
 		redirecionar.forward(request, response);
 		} else if ("SOLICITANTE".equals(cargo)) {
@@ -86,7 +86,10 @@ public class LoginServlet extends HttpServlet {
 		} else {
 			request.setAttribute("erroLogin", "Usuário ou senha inválidos");
 			request.getRequestDispatcher("index.jsp").forward(request, response);
-		}
+		}*/
+
+		RequestDispatcher redirecionar = request.getRequestDispatcher("telaPrincipal.jsp");
+		redirecionar.forward(request, response);
 }
 
 private void handleSolicitante(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException, SQLException {
