@@ -1,4 +1,4 @@
-<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
 <%@page import="model.EspacoModel"%>
 <%@page import="dao.EspacoDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
